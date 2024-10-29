@@ -26,7 +26,6 @@ public class OwnerControllerImpl implements OwnerController {
     }
 
 
-    @Override
     @GetMapping
     public List<OwnerDto> getAllOwners() {
         return ownerService.getAllOwners().stream()
@@ -35,14 +34,14 @@ public class OwnerControllerImpl implements OwnerController {
     }
 
 
-    @Override
+
     @GetMapping("/{id}")
     public OwnerDto getOwnerById(@PathVariable Long id) {
         return mappingUtils.mapToOwnerDto(ownerService.getOwnerById(id));
     }
 
 
-    @Override
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OwnerDto createOwner(@Valid @RequestBody OwnerDto ownerDto) {
@@ -51,14 +50,14 @@ public class OwnerControllerImpl implements OwnerController {
     }
 
 
-    @Override
+
     @PutMapping("/{id}")
     public OwnerDto updateOwner(@PathVariable Long id, @Valid @RequestBody OwnerDto ownerDto) {
         OwnerModel ownerModel = mappingUtils.mapToOwnerModelFromDto(ownerDto);
         return mappingUtils.mapToOwnerDto(ownerService.updateOwner(id, ownerModel));
     }
 
-    @Override
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteOwner(@PathVariable Long id) {
