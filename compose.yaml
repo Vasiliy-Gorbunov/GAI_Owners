@@ -1,9 +1,32 @@
+version: '3.9'
 services:
-  postgres:
-    image: 'postgres:latest'
-    environment:
-      - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+  cars:
+    build:
+      context: ./Cars
     ports:
-      - '5432'
+      - "8082:8082"
+    networks:
+      - microservices-network
+
+  owners:
+    build:
+      context: ./Owners
+    ports:
+      - "8081:8081"
+    networks:
+      - microservices-network
+
+  docs:
+    build:
+      context: ./Docs
+    ports:
+      - "8083:8083"
+    networks:
+      - microservices-network
+    environment:
+      - CARS_SERVICE_URL=http://cars:8081
+      - OWNERS_SERVICE_URL=http://owners:8082
+
+networks:
+  microservices-network:
+    driver: bridge
