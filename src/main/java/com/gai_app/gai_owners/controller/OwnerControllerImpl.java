@@ -6,6 +6,7 @@ import com.gai_app.gai_owners.model.OwnerModel;
 import com.gai_app.gai_owners.service.OwnerService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,8 +37,9 @@ public class OwnerControllerImpl implements OwnerController {
 
 
     @GetMapping("/{id}")
-    public OwnerDto getOwnerById(@PathVariable Long id) {
-        return mappingUtils.mapToOwnerDto(ownerService.getOwnerById(id));
+    public ResponseEntity<Object> getOwnerById(@PathVariable Long id) {
+        OwnerDto ownerDto = mappingUtils.mapToOwnerDto(ownerService.getOwnerById(id));
+        return new ResponseEntity<>(ownerDto, HttpStatus.OK);
     }
 
 
