@@ -23,7 +23,7 @@ public class OwnerDto {
 
 
     @NotBlank(message = "Name cannot be null or blank")
-    @Pattern(regexp = "^[a-zA-zа-яА-Я-. ]+$",
+    @Pattern(regexp = "^[a-zA-Zа-яА-Я-. ]+$",
             message = "Name must contain only letters, dashes, points and spaces")
     @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
     private String name;
