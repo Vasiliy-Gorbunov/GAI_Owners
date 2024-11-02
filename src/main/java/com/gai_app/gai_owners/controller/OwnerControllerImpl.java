@@ -37,7 +37,7 @@ public class OwnerControllerImpl implements OwnerController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getOwnerById(@PathVariable Long id) {
+    public ResponseEntity<OwnerDto> getOwnerById(@PathVariable Long id) {
         OwnerDto ownerDto = mappingUtils.mapToOwnerDto(ownerService.getOwnerById(id));
         return new ResponseEntity<>(ownerDto, HttpStatus.OK);
     }
