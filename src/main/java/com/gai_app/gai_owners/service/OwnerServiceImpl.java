@@ -5,6 +5,7 @@ import com.gai_app.gai_owners.exception.ResourceNotFoundException;
 import com.gai_app.gai_owners.mapper.MappingUtils;
 import com.gai_app.gai_owners.model.OwnerModel;
 import com.gai_app.gai_owners.repository.OwnerRepository;
+import com.gai_app.gai_owners.service.kafka.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +18,13 @@ public class OwnerServiceImpl implements OwnerService {
 
     private final OwnerRepository ownerRepository;
     private final MappingUtils mappingUtils;
+    private final NotificationService notificationService;
 
     @Autowired
-    public OwnerServiceImpl(OwnerRepository ownerRepository, MappingUtils mappingUtils) {
+    public OwnerServiceImpl(OwnerRepository ownerRepository, MappingUtils mappingUtils, NotificationService notificationService) {
         this.ownerRepository = ownerRepository;
         this.mappingUtils = mappingUtils;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -38,7 +41,7 @@ public class OwnerServiceImpl implements OwnerService {
     public OwnerModel getOwnerById(Long id) {
         return mappingUtils
                 .mapToOwnerModelFromEntity(ownerRepository.findById(id)
-                        .orElseThrow(() -> ThrowableMessage("Owner", id)));
+                        .orElseThrow(() -> ThrowableMessage(id)));
     }
 
 
@@ -46,7 +49,9 @@ public class OwnerServiceImpl implements OwnerService {
     @Transactional
     public OwnerModel createOwner(OwnerModel ownerModel) {
         Owner owner = mappingUtils.mapToOwner(ownerModel);
-        return mappingUtils.mapToOwnerModelFromEntity(ownerRepository.save(owner));
+        OwnerModel savedOwner = mappingUtils.mapToOwnerModelFromEntity(ownerRepository.save(owner));
+        notificationService.getModelCreateMessageAndSend(savedOwner, "created");
+        return savedOwner;
     }
 
 
@@ -54,14 +59,15 @@ public class OwnerServiceImpl implements OwnerService {
     @Transactional
     public OwnerModel updateOwner(Long id, OwnerModel updatedOwner) {
         Owner existingOwner = ownerRepository.findById(id)
-                .orElseThrow(() -> ThrowableMessage("Owner", id));
+                .orElseThrow(() -> ThrowableMessage(id));
 
         mappingUtils.mapToOwner(updatedOwner);
         existingOwner.setName(updatedOwner.getName());
         existingOwner.setDob(updatedOwner.getDob());
         existingOwner.setGender(updatedOwner.getGender());
-
-        return mappingUtils.mapToOwnerModelFromEntity(ownerRepository.save(existingOwner));
+        updatedOwner = mappingUtils.mapToOwnerModelFromEntity(ownerRepository.save(existingOwner));
+        notificationService.getModelCreateMessageAndSend(updatedOwner, "updated");
+        return updatedOwner;
     }
 
 
@@ -69,12 +75,14 @@ public class OwnerServiceImpl implements OwnerService {
     @Transactional
     public void deleteOwner(Long id) {
         Owner existingOwner = ownerRepository.findById(id)
-                .orElseThrow(() -> ThrowableMessage("Car", id));
+                .orElseThrow(() -> ThrowableMessage(id));
         ownerRepository.deleteById(existingOwner.getId());
+        notificationService.getModelCreateMessageAndSend(mappingUtils
+                .mapToOwnerModelFromEntity(existingOwner), "deleted");
     }
 
-    private ResourceNotFoundException ThrowableMessage(String obj, Long id) {
-        return new ResourceNotFoundException(obj + " with id " + id + " not found");
+    private ResourceNotFoundException ThrowableMessage(Long id) {
+        return new ResourceNotFoundException("Owner with id " + id + " not found");
     }
 }
 
