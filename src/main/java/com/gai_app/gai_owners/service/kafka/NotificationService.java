@@ -14,8 +14,8 @@ public class NotificationService {
     }
 
     public void getModelCreateMessageAndSend(OwnerModel ownerModel, String cause) {
-        String message = "Owner with id " + ownerModel.getId() + " has been " + cause + "\n"
-                + "Owner: " + ownerModel;
+        String message = "Owner with id " + ownerModel.getId() + " has been "
+                + cause + ". Owner: " + ownerModel;
         sendNotification(message);
     }
 
