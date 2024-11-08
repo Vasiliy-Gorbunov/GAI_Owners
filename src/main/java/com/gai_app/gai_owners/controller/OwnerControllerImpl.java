@@ -6,6 +6,7 @@ import com.gai_app.gai_owners.model.OwnerModel;
 import com.gai_app.gai_owners.service.OwnerService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +27,6 @@ public class OwnerControllerImpl implements OwnerController {
     }
 
 
-    @Override
     @GetMapping
     public List<OwnerDto> getAllOwners() {
         return ownerService.getAllOwners().stream()
@@ -35,14 +35,15 @@ public class OwnerControllerImpl implements OwnerController {
     }
 
 
-    @Override
+
     @GetMapping("/{id}")
-    public OwnerDto getOwnerById(@PathVariable Long id) {
-        return mappingUtils.mapToOwnerDto(ownerService.getOwnerById(id));
+    public ResponseEntity<OwnerDto> getOwnerById(@PathVariable Long id) {
+        OwnerDto ownerDto = mappingUtils.mapToOwnerDto(ownerService.getOwnerById(id));
+        return new ResponseEntity<>(ownerDto, HttpStatus.OK);
     }
 
 
-    @Override
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OwnerDto createOwner(@Valid @RequestBody OwnerDto ownerDto) {
@@ -51,14 +52,14 @@ public class OwnerControllerImpl implements OwnerController {
     }
 
 
-    @Override
+
     @PutMapping("/{id}")
     public OwnerDto updateOwner(@PathVariable Long id, @Valid @RequestBody OwnerDto ownerDto) {
         OwnerModel ownerModel = mappingUtils.mapToOwnerModelFromDto(ownerDto);
         return mappingUtils.mapToOwnerDto(ownerService.updateOwner(id, ownerModel));
     }
 
-    @Override
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteOwner(@PathVariable Long id) {

@@ -1,6 +1,5 @@
-package com.gai_app.gai_owners.controller;
+package com.gai_app.gai_owners.exception;
 
-import com.gai_app.gai_owners.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
