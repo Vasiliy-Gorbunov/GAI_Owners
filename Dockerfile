@@ -1,5 +1,11 @@
-FROM openjdk:21-jdk-slim
+FROM maven:3.9.9-eclipse-temurin-21 AS builder
 WORKDIR /app
-COPY /target/GAI_Owners-0.0.1-SNAPSHOT.jar /app/GAI_Owners.jar
+COPY . /app
+
+RUN mvn package -DskipTests
+
+FROM  eclipse-temurin:21-jre-alpine
+COPY --from=builder /app/target/GAI_Owners*.jar /GAI_Owners.jar
+
 EXPOSE 8081
-ENTRYPOINT ["java", "-jar", "GAI_Owners.jar"]
+ENTRYPOINT ["java", "-XX:+UseContainerSupport","-XX:MaxRAMPercentage=70.0", "-XX:+UseParallelGC", "-jar", "GAI_Owners.jar"]
